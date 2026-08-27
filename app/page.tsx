@@ -888,32 +888,6 @@ const milestones: Milestone[] = [
     ],
   },
   {
-    date: '2026-08-24',
-    year: '2026',
-    model: 'Ornith-1.5-35B-A3B',
-    title: 'X 上的本地动画测试',
-    summary:
-      '发布者称模型在 M4 Pro 本地运行。提示词增加了 animation，因此只作为动画能力补充，不并入静态主线。',
-    track: '动画变体',
-    media: [
-      {
-        src: '/pelicans/2026-08-ornith-1.5-animation-x.jpg',
-        label: '本地运行记录',
-        alt: 'Ornith-1.5 在 M4 Pro 本地运行的终端记录',
-      },
-    ],
-    sources: [
-      {
-        label: 'X 发布帖',
-        href: 'https://x.com/Oluwaphilemon1/status/2091884119676330256',
-      },
-      {
-        label: '动画视频',
-        href: 'https://x.com/xueyu1125/status/2091388619793813737/video/1',
-      },
-    ],
-  },
-  {
     date: '2026-08-27',
     year: '2026',
     model: '未公开新模型',

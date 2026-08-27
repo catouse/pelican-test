@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState, type CSSProperties } from 'react';
+import Image from 'next/image';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 
 type Media = {
   src: string;
@@ -916,10 +917,72 @@ const mediaCount = milestones.reduce((total, milestone) => total + milestone.med
 
 const yearOptions = ['全部', '2024', '2025', '2026'] as const;
 type YearOption = (typeof yearOptions)[number];
+type Theme = 'light' | 'dark';
+
+function ThemeSwitch() {
+  const [theme, setTheme] = useState<Theme | null>(null);
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const syncTheme = () => {
+      const savedTheme = localStorage.getItem('pelican-theme');
+      const nextTheme =
+        savedTheme === 'light' || savedTheme === 'dark'
+          ? savedTheme
+          : media.matches
+            ? 'dark'
+            : 'light';
+
+      document.documentElement.dataset.theme = nextTheme;
+      document.documentElement.style.colorScheme = nextTheme;
+      setTheme(nextTheme);
+    };
+
+    syncTheme();
+    media.addEventListener('change', syncTheme);
+    return () => media.removeEventListener('change', syncTheme);
+  }, []);
+
+  const selectTheme = (nextTheme: Theme) => {
+    localStorage.setItem('pelican-theme', nextTheme);
+    document.documentElement.dataset.theme = nextTheme;
+    document.documentElement.style.colorScheme = nextTheme;
+    setTheme(nextTheme);
+  };
+
+  return (
+    <div className="theme-switch" role="group" aria-label="外观主题">
+      <button
+        type="button"
+        aria-pressed={theme === 'light'}
+        onClick={() => selectTheme('light')}
+      >
+        浅色
+      </button>
+      <button
+        type="button"
+        aria-pressed={theme === 'dark'}
+        onClick={() => selectTheme('dark')}
+      >
+        深色
+      </button>
+    </div>
+  );
+}
 
 export default function Home() {
   const [comparison, setComparison] = useState(47);
   const [year, setYear] = useState<YearOption>('全部');
+  const [preview, setPreview] = useState<Media | null>(null);
+  const previewDialog = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = previewDialog.current;
+    if (!dialog) return;
+
+    if (preview && !dialog.open) dialog.showModal();
+    if (!preview && dialog.open) dialog.close();
+  }, [preview]);
 
   const filteredMilestones = useMemo(
     () =>
@@ -937,22 +1000,30 @@ export default function Home() {
 
       <header className="topbar">
         <a className="brand" href="#top" aria-label="返回页面顶部">
-          <span className="brand-mark" aria-hidden="true">
-            P
-          </span>
+          <Image
+            className="brand-logo"
+            src="/pelican-logo.png"
+            alt=""
+            width={40}
+            height={40}
+            priority
+          />
           <span>Pelican Test</span>
         </a>
-        <nav className="topnav" aria-label="主导航">
-          <a href="#timeline">时间轴</a>
-          <a href="#method">比较口径</a>
-          <a
-            href="https://simonwillison.net/tags/pelican-riding-a-bicycle/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            原始归档
-          </a>
-        </nav>
+        <div className="topbar-actions">
+          <nav className="topnav" aria-label="主导航">
+            <a href="#timeline">时间轴</a>
+            <a href="#method">比较口径</a>
+            <a
+              href="https://simonwillison.net/tags/pelican-riding-a-bicycle/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              原始归档
+            </a>
+          </nav>
+          <ThemeSwitch />
+        </div>
       </header>
 
       <main>
@@ -989,11 +1060,30 @@ export default function Home() {
               role="img"
               aria-label="2024 年 Claude 3.5 Sonnet 的简化鸟形，与 2026 年 Qwen 3.8 27B 的完整鹈鹕骑自行车对比"
             >
-              <span className="comparison-image comparison-image-new" aria-hidden="true" />
-              <span
-                className="comparison-image comparison-image-old"
+              <Image
+                className="comparison-image comparison-image-new"
+                src="/pelicans/hero-qwen-3.8.webp"
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 980px) 100vw, 58vw"
+                unoptimized
                 aria-hidden="true"
-                style={{ clipPath: `inset(0 ${100 - comparison}% 0 0)` }}
+                style={{ objectFit: 'contain' }}
+              />
+              <Image
+                className="comparison-image comparison-image-old"
+                src="/pelicans/2024-10-claude-3.5-sonnet.svg"
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 980px) 100vw, 58vw"
+                unoptimized
+                aria-hidden="true"
+                style={{
+                  objectFit: 'contain',
+                  clipPath: `inset(0 ${100 - comparison}% 0 0)`,
+                }}
               />
               <span className="comparison-divider" aria-hidden="true" />
             </div>
@@ -1084,14 +1174,22 @@ export default function Home() {
                             preload="metadata"
                           />
                         ) : (
-                          <a
-                            href={asset.src}
-                            target="_blank"
-                            rel="noreferrer"
-                            aria-label={`打开原图：${asset.label}`}
+                          <button
+                            className="media-preview"
+                            type="button"
+                            aria-label={`放大预览：${asset.label}`}
+                            aria-haspopup="dialog"
+                            onClick={() => setPreview(asset)}
                           >
-                            <img src={asset.src} alt={asset.alt} loading="lazy" decoding="async" />
-                          </a>
+                            <Image
+                              src={asset.src}
+                              alt={asset.alt}
+                              width={1200}
+                              height={900}
+                              loading="lazy"
+                              unoptimized
+                            />
+                          </button>
                         )}
                         <figcaption>{asset.label}</figcaption>
                       </figure>
@@ -1162,6 +1260,51 @@ export default function Home() {
           查看完整来源归档
         </a>
       </footer>
+
+      <dialog
+        className="preview-dialog"
+        ref={previewDialog}
+        aria-label={preview ? `${preview.label} 图片预览` : '图片预览'}
+        onClose={() => setPreview(null)}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) event.currentTarget.close();
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            event.currentTarget.close();
+          }
+        }}
+      >
+        {preview ? (
+          <div className="preview-dialog-inner">
+            <header className="preview-dialog-header">
+              <div>
+                <strong>{preview.label}</strong>
+                <span>原始测试结果</span>
+              </div>
+              <button type="button" onClick={() => previewDialog.current?.close()}>
+                关闭
+              </button>
+            </header>
+            <div className="preview-dialog-media">
+              <Image
+                src={preview.src}
+                alt={preview.alt}
+                width={1200}
+                height={900}
+                unoptimized
+              />
+            </div>
+            <div className="preview-dialog-footer">
+              <p>{preview.alt}</p>
+              <a href={preview.src} target="_blank" rel="noreferrer">
+                打开原图
+              </a>
+            </div>
+          </div>
+        ) : null}
+      </dialog>
     </div>
   );
 }

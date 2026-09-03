@@ -1193,6 +1193,7 @@ const english: Record<string, string> = {
   '2024 年 Claude 3.5 Sonnet 的简化鸟形，与 2026 年 Qwen 3.8 27B 的完整鹈鹕骑自行车对比':
     'A comparison between the simplified bird from Claude 3.5 Sonnet in 2024 and the complete pelican riding a bicycle from Qwen 3.8 27B in 2026',
   '拖动对比 2024 与 2026': 'Drag to compare 2024 and 2026',
+  '直接拖动图片，或使用方向键': 'Drag the image or use the arrow keys',
   '收录范围': 'Coverage',
   '时间轴起点': 'Timeline begins',
   '代表节点': 'Milestones',
@@ -1229,6 +1230,9 @@ const english: Record<string, string> = {
   '查看完整来源归档': 'View the complete source archive',
   '图片预览': 'Image preview',
   '原始测试结果': 'Original test result',
+  '预览导航': 'Preview navigation',
+  '上一张': 'Previous',
+  '下一张': 'Next',
   '关闭': 'Close',
   '打开原图': 'Open original image',
   '鹈鹕测试时间轴 | 大模型 SVG 能力演进':
@@ -1249,17 +1253,6 @@ function LanguageSwitch({
 }) {
   return (
     <div className="language-select">
-      <svg
-        className="control-icon"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        aria-hidden="true"
-      >
-        <circle cx="12" cy="12" r="9" />
-        <path d="M3 12h18M12 3c2.3 2.5 3.5 5.5 3.5 9s-1.2 6.5-3.5 9c-2.3-2.5-3.5-5.5-3.5-9S9.7 5.5 12 3Z" />
-      </svg>
       <select
         value={locale}
         aria-label={locale === 'zh' ? '语言' : 'Language'}
@@ -1307,7 +1300,7 @@ function ThemeSwitch({ locale }: { locale: Locale }) {
 
   return (
     <button
-      className="icon-toggle"
+      className="theme-toggle"
       type="button"
       aria-label={
         locale === 'zh'
@@ -1321,30 +1314,7 @@ function ThemeSwitch({ locale }: { locale: Locale }) {
       aria-pressed={isDark}
       onClick={() => selectTheme(isDark ? 'light' : 'dark')}
     >
-      {isDark ? (
-        <svg
-          className="control-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" />
-        </svg>
-      ) : (
-        <svg
-          className="control-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          aria-hidden="true"
-        >
-          <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z" />
-        </svg>
-      )}
+      {translate(locale, isDark ? '浅色' : '深色')}
     </button>
   );
 }
@@ -1404,6 +1374,23 @@ export default function Home() {
         : milestones.filter((milestone) => milestone.year === year),
     [year],
   );
+  const previewAssets = useMemo(
+    () =>
+      filteredMilestones.flatMap((milestone) =>
+        milestone.media.filter((asset) => asset.kind !== 'video'),
+      ),
+    [filteredMilestones],
+  );
+  const previewIndex = preview
+    ? previewAssets.findIndex((asset) => asset.src === preview.src)
+    : -1;
+
+  const movePreview = (direction: -1 | 1) => {
+    const nextIndex = previewIndex + direction;
+    if (nextIndex >= 0 && nextIndex < previewAssets.length) {
+      setPreview(previewAssets[nextIndex]);
+    }
+  };
 
   return (
     <div className="site-shell">
@@ -1466,6 +1453,11 @@ export default function Home() {
           </div>
 
           <figure className="comparison">
+            <figcaption className="visually-hidden" id="comparison-caption">
+              {t(
+                '2024 年 Claude 3.5 Sonnet 的简化鸟形，与 2026 年 Qwen 3.8 27B 的完整鹈鹕骑自行车对比',
+              )}
+            </figcaption>
             <div className="comparison-meta" aria-hidden="true">
               <span>2024 Claude 3.5</span>
               <span>2026 Qwen 3.8</span>
@@ -1473,10 +1465,6 @@ export default function Home() {
             <div
               className="comparison-stage"
               style={{ '--split': `${comparison}%` } as CSSProperties}
-              role="img"
-              aria-label={t(
-                '2024 年 Claude 3.5 Sonnet 的简化鸟形，与 2026 年 Qwen 3.8 27B 的完整鹈鹕骑自行车对比',
-              )}
             >
               <Image
                 className="comparison-image comparison-image-new"
@@ -1504,22 +1492,27 @@ export default function Home() {
                 }}
               />
               <span className="comparison-divider" aria-hidden="true" />
-            </div>
-            <label className="comparison-control">
-              <span>{t('拖动对比 2024 与 2026')}</span>
               <input
+                id="comparison-slider"
+                className="comparison-stage-control"
                 type="range"
                 min="8"
                 max="92"
                 value={comparison}
-                onChange={(event) => setComparison(Number(event.target.value))}
+                aria-label={t('拖动对比 2024 与 2026')}
+                aria-describedby="comparison-caption"
                 aria-valuetext={
                   locale === 'zh'
                     ? `左侧显示 ${comparison}% 的 2024 结果`
                     : `${comparison}% of the 2024 result is visible on the left`
                 }
+                onChange={(event) => setComparison(Number(event.target.value))}
               />
-            </label>
+            </div>
+            <div className="comparison-control" aria-hidden="true">
+              <span>{t('直接拖动图片，或使用方向键')}</span>
+              <output htmlFor="comparison-slider">{comparison}%</output>
+            </div>
           </figure>
         </section>
 
@@ -1553,6 +1546,7 @@ export default function Home() {
               <button
                 key={option}
                 type="button"
+                aria-controls="timeline-results"
                 aria-pressed={year === option}
                 onClick={() => setYear(option)}
               >
@@ -1566,7 +1560,7 @@ export default function Home() {
             </span>
           </div>
 
-          <div className="timeline-list">
+          <div className="timeline-list" id="timeline-results">
             {filteredMilestones.map((milestone) => (
               <article className="timeline-entry" key={`${milestone.date}-${milestone.model}`}>
                 <div className="timeline-date">
@@ -1721,6 +1715,14 @@ export default function Home() {
             event.preventDefault();
             event.currentTarget.close();
           }
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            movePreview(-1);
+          }
+          if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            movePreview(1);
+          }
         }}
       >
         {preview ? (
@@ -1728,7 +1730,11 @@ export default function Home() {
             <header className="preview-dialog-header">
               <div>
                 <strong>{t(preview.label)}</strong>
-                <span>{t('原始测试结果')}</span>
+                <span>
+                  {locale === 'zh'
+                    ? `${t('原始测试结果')}，第 ${previewIndex + 1} 张，共 ${previewAssets.length} 张`
+                    : `${t('原始测试结果')}, ${previewIndex + 1} of ${previewAssets.length}`}
+                </span>
               </div>
               <button type="button" onClick={() => previewDialog.current?.close()}>
                 {t('关闭')}
@@ -1745,9 +1751,27 @@ export default function Home() {
             </div>
             <div className="preview-dialog-footer">
               <p>{t(preview.alt)}</p>
-              <a href={preview.src} target="_blank" rel="noreferrer">
-                {t('打开原图')}
-              </a>
+              <div className="preview-dialog-footer-actions">
+                <a href={preview.src} target="_blank" rel="noreferrer">
+                  {t('打开原图')}
+                </a>
+                <div className="preview-dialog-nav" role="group" aria-label={t('预览导航')}>
+                  <button
+                    type="button"
+                    disabled={previewIndex <= 0}
+                    onClick={() => movePreview(-1)}
+                  >
+                    {t('上一张')}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={previewIndex === previewAssets.length - 1}
+                    onClick={() => movePreview(1)}
+                  >
+                    {t('下一张')}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         ) : null}

@@ -8,7 +8,7 @@
   --text: #1b1b19;
   --muted: #65615b;
   --line: #d6d3cc;
-  --accent: #dc6438;
+  --accent: #b24720;
   --accent-soft: #f2d1c4;
   --button-bg: #a93d18;
   --button-text: #fffaf6;
@@ -109,6 +109,16 @@ select {
   outline-offset: 4px;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .skip-link {
   position: fixed;
   left: 16px;
@@ -189,8 +199,8 @@ select {
 }
 
 .language-select,
-.icon-toggle {
-  height: 40px;
+.theme-toggle {
+  height: 44px;
   flex: 0 0 auto;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -209,10 +219,6 @@ select {
   align-items: center;
 }
 
-.language-select > .control-icon {
-  margin-left: 11px;
-}
-
 .language-select::after {
   position: absolute;
   right: 12px;
@@ -226,41 +232,37 @@ select {
 }
 
 .language-select select {
-  height: 38px;
+  height: 42px;
   appearance: none;
   border: 0;
   background: transparent;
   color: var(--text);
-  padding: 0 30px 0 8px;
+  padding: 0 30px 0 14px;
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
 }
 
 .language-select:hover,
-.icon-toggle:hover {
+.theme-toggle:hover {
   border-color: var(--muted);
   color: var(--text);
 }
 
-.icon-toggle {
-  display: grid;
-  width: 40px;
-  place-items: center;
-  padding: 0;
+.theme-toggle {
+  display: inline-flex;
+  min-width: 58px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
   cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-.icon-toggle:active {
+.theme-toggle:active {
   transform: translateY(1px);
-}
-
-.control-icon {
-  width: 18px;
-  height: 18px;
-  flex: 0 0 auto;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 main,
@@ -422,21 +424,45 @@ h1 {
   font-weight: 800;
 }
 
+.comparison-stage-control {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: ew-resize;
+  opacity: 0;
+  touch-action: pan-y;
+}
+
+.comparison-stage-control:focus-visible {
+  outline: none;
+}
+
+.comparison-stage:has(.comparison-stage-control:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.comparison-stage:has(.comparison-stage-control:active) .comparison-divider::after {
+  transform: translate(-50%, -50%) scale(0.94);
+}
+
 .comparison-control {
   display: grid;
-  grid-template-columns: auto minmax(120px, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   margin-top: 16px;
   color: var(--muted);
   font-size: 13px;
   font-weight: 650;
 }
 
-.comparison-control input {
-  width: 100%;
-  accent-color: var(--accent);
-  cursor: ew-resize;
+.comparison-control output {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
 .fact-strip {
@@ -510,7 +536,7 @@ h1 {
 }
 
 .year-filter button {
-  min-height: 38px;
+  min-height: 44px;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -848,7 +874,7 @@ footer p {
 }
 
 .preview-dialog-header button {
-  min-height: 36px;
+  min-height: 44px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--surface-strong);
@@ -909,6 +935,50 @@ footer p {
   text-decoration-thickness: 2px;
   text-underline-offset: 4px;
   white-space: nowrap;
+}
+
+.preview-dialog-footer-actions,
+.preview-dialog-nav {
+  display: flex;
+  align-items: center;
+}
+
+.preview-dialog-footer-actions {
+  flex: 0 0 auto;
+  gap: 18px;
+}
+
+.preview-dialog-nav {
+  gap: 8px;
+}
+
+.preview-dialog-nav button {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-strong);
+  color: var(--text);
+  padding: 0 14px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+
+.preview-dialog-nav button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.preview-dialog-nav button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.preview-dialog-nav button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1185,6 +1255,12 @@ footer p {
     align-items: flex-start;
     flex-direction: column;
     gap: 10px;
+  }
+
+  .preview-dialog-footer-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
 }
 

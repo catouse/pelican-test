@@ -14,6 +14,7 @@ const themeInitScript = `
 `;
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://pelican.catou.se'),
   title: '鹈鹕测试时间轴 | 大模型 SVG 能力演进',
   description: '用同一句 SVG 提示词，直观浏览 2024 到 2026 年不同大模型的实际效果演进。',
   openGraph: {

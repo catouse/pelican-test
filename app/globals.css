@@ -92,13 +92,15 @@ a {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
 button,
 a,
-input {
+input,
+select {
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -186,48 +188,79 @@ input {
   color: var(--text);
 }
 
-.theme-switch {
-  display: flex;
+.language-select,
+.icon-toggle {
+  height: 40px;
   flex: 0 0 auto;
-  align-items: center;
-  gap: 2px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--surface);
-  padding: 3px;
+  color: var(--muted);
   transition:
     background-color 220ms ease,
-    border-color 220ms ease;
-}
-
-.theme-switch button {
-  min-width: 46px;
-  min-height: 32px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--muted);
-  padding: 0 10px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 700;
-  transition:
-    background-color 160ms ease,
+    border-color 160ms ease,
     color 160ms ease,
     transform 160ms ease;
 }
 
-.theme-switch button:hover {
+.language-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.language-select > .control-icon {
+  margin-left: 11px;
+}
+
+.language-select::after {
+  position: absolute;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  content: '';
+  pointer-events: none;
+  transform: translateY(-2px) rotate(45deg);
+}
+
+.language-select select {
+  height: 38px;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 0 30px 0 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.language-select:hover,
+.icon-toggle:hover {
+  border-color: var(--muted);
   color: var(--text);
 }
 
-.theme-switch button:active {
+.icon-toggle {
+  display: grid;
+  width: 40px;
+  place-items: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.icon-toggle:active {
   transform: translateY(1px);
 }
 
-.theme-switch button[aria-pressed='true'] {
-  background: var(--text);
-  color: var(--surface);
+.control-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 main,
@@ -1163,11 +1196,6 @@ footer p {
   .brand-logo {
     width: 36px;
     height: 36px;
-  }
-
-  .theme-switch button {
-    min-width: 40px;
-    padding-inline: 8px;
   }
 
   .hero-actions {

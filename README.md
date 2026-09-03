@@ -4,7 +4,7 @@
 
 > This site is primarily based on Simon Willison's [Pelican riding a bicycle](https://simonwillison.net/tags/pelican-riding-a-bicycle/) series and the original posts referenced there. Each timeline entry retains links to its sources; all results remain the property of their original authors and publishers.
 
-![Pelican Test timeline preview](./public/og.png)
+![Pelican Test timeline preview](./public/og-en.png)
 
 Use the same SVG prompt to browse how different language models rendered “a pelican riding a bicycle” from 2024 to 2026.
 

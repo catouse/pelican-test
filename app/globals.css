@@ -217,10 +217,15 @@ select {
   position: relative;
   display: flex;
   align-items: center;
+  isolation: isolate;
 }
 
 .language-select > .control-icon {
-  margin-left: 11px;
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  color: var(--text);
+  pointer-events: none;
 }
 
 .language-select::after {
@@ -236,12 +241,14 @@ select {
 }
 
 .language-select select {
+  position: relative;
+  z-index: 0;
   height: 42px;
   appearance: none;
   border: 0;
   background: transparent;
   color: var(--text);
-  padding: 0 30px 0 8px;
+  padding: 0 30px 0 38px;
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;

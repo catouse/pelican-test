@@ -219,6 +219,10 @@ select {
   align-items: center;
 }
 
+.language-select > .control-icon {
+  margin-left: 11px;
+}
+
 .language-select::after {
   position: absolute;
   right: 12px;
@@ -237,7 +241,7 @@ select {
   border: 0;
   background: transparent;
   color: var(--text);
-  padding: 0 30px 0 14px;
+  padding: 0 30px 0 8px;
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
@@ -250,19 +254,23 @@ select {
 }
 
 .theme-toggle {
-  display: inline-flex;
-  min-width: 58px;
-  align-items: center;
-  justify-content: center;
-  padding: 0 14px;
+  display: grid;
+  width: 44px;
+  place-items: center;
+  padding: 0;
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
 }
 
 .theme-toggle:active {
   transform: translateY(1px);
+}
+
+.control-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 main,

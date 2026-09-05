@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { readPreference, writePreference } from './preferences';
 
 type Media = {
   src: string;
@@ -1278,17 +1279,14 @@ function LanguageSwitch({
 
 function ThemeSwitch({ locale }: { locale: Locale }) {
   const [theme, setTheme] = useState<Theme | null>(null);
+  const selectedTheme = useRef<Theme | null>(null);
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const savedTheme = readPreference('pelican-theme');
+    selectedTheme.current = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : null;
     const syncTheme = () => {
-      const savedTheme = localStorage.getItem('pelican-theme');
-      const nextTheme =
-        savedTheme === 'light' || savedTheme === 'dark'
-          ? savedTheme
-          : media.matches
-            ? 'dark'
-            : 'light';
+      const nextTheme = selectedTheme.current ?? (media.matches ? 'dark' : 'light');
 
       document.documentElement.dataset.theme = nextTheme;
       document.documentElement.style.colorScheme = nextTheme;
@@ -1301,10 +1299,11 @@ function ThemeSwitch({ locale }: { locale: Locale }) {
   }, []);
 
   const selectTheme = (nextTheme: Theme) => {
-    localStorage.setItem('pelican-theme', nextTheme);
+    selectedTheme.current = nextTheme;
     document.documentElement.dataset.theme = nextTheme;
     document.documentElement.style.colorScheme = nextTheme;
     setTheme(nextTheme);
+    writePreference('pelican-theme', nextTheme);
   };
 
   const isDark = theme === 'dark';
@@ -1361,7 +1360,7 @@ export default function Home() {
   const previewDialog = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    const savedLocale = localStorage.getItem('pelican-locale');
+    const savedLocale = readPreference('pelican-locale');
     const nextLocale =
       savedLocale === 'zh' || savedLocale === 'en'
         ? savedLocale
@@ -1387,8 +1386,8 @@ export default function Home() {
   }, [locale]);
 
   const selectLocale = (nextLocale: Locale) => {
-    localStorage.setItem('pelican-locale', nextLocale);
     setLocale(nextLocale);
+    writePreference('pelican-locale', nextLocale);
   };
 
   const t = (text: string) => translate(locale, text);

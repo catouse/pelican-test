@@ -1352,9 +1352,78 @@ function ThemeSwitch({ locale }: { locale: Locale }) {
   );
 }
 
+function Comparison({ locale }: { locale: Locale }) {
+  const [comparison, setComparison] = useState(47);
+  const t = (text: string) => translate(locale, text);
+
+  return (
+    <figure className="comparison">
+      <figcaption className="visually-hidden" id="comparison-caption">
+        {t(
+          '2024 年 Claude 3.5 Sonnet 的简化鸟形，与 2026 年 Qwen 3.8 27B 的完整鹈鹕骑自行车对比',
+        )}
+      </figcaption>
+      <div className="comparison-meta" aria-hidden="true">
+        <span>2024 Claude 3.5</span>
+        <span>2026 Qwen 3.8</span>
+      </div>
+      <div
+        className="comparison-stage"
+        style={{ '--split': `${comparison}%` } as CSSProperties}
+      >
+        <Image
+          className="comparison-image comparison-image-new"
+          src="/pelicans/hero-qwen-3.8.webp"
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 980px) 100vw, 58vw"
+          unoptimized
+          aria-hidden="true"
+          style={{ objectFit: 'contain' }}
+        />
+        <Image
+          className="comparison-image comparison-image-old"
+          src="/pelicans/2024-10-claude-3.5-sonnet.svg"
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 980px) 100vw, 58vw"
+          unoptimized
+          aria-hidden="true"
+          style={{
+            objectFit: 'contain',
+            clipPath: `inset(0 ${100 - comparison}% 0 0)`,
+          }}
+        />
+        <span className="comparison-divider" aria-hidden="true" />
+        <input
+          id="comparison-slider"
+          className="comparison-stage-control"
+          type="range"
+          min="8"
+          max="92"
+          value={comparison}
+          aria-label={t('拖动对比 2024 与 2026')}
+          aria-describedby="comparison-caption"
+          aria-valuetext={
+            locale === 'zh'
+              ? `左侧显示 ${comparison}% 的 2024 结果`
+              : `${comparison}% of the 2024 result is visible on the left`
+          }
+          onChange={(event) => setComparison(Number(event.target.value))}
+        />
+      </div>
+      <div className="comparison-control" aria-hidden="true">
+        <span>{t('直接拖动图片，或使用方向键')}</span>
+        <output htmlFor="comparison-slider">{comparison}%</output>
+      </div>
+    </figure>
+  );
+}
+
 export default function Home() {
   const [locale, setLocale] = useState<Locale>('zh');
-  const [comparison, setComparison] = useState(47);
   const [year, setYear] = useState<YearOption>('全部');
   const [preview, setPreview] = useState<Media | null>(null);
   const previewDialog = useRef<HTMLDialogElement>(null);
@@ -1485,68 +1554,7 @@ export default function Home() {
             </div>
           </div>
 
-          <figure className="comparison">
-            <figcaption className="visually-hidden" id="comparison-caption">
-              {t(
-                '2024 年 Claude 3.5 Sonnet 的简化鸟形，与 2026 年 Qwen 3.8 27B 的完整鹈鹕骑自行车对比',
-              )}
-            </figcaption>
-            <div className="comparison-meta" aria-hidden="true">
-              <span>2024 Claude 3.5</span>
-              <span>2026 Qwen 3.8</span>
-            </div>
-            <div
-              className="comparison-stage"
-              style={{ '--split': `${comparison}%` } as CSSProperties}
-            >
-              <Image
-                className="comparison-image comparison-image-new"
-                src="/pelicans/hero-qwen-3.8.webp"
-                alt=""
-                fill
-                priority
-                sizes="(max-width: 980px) 100vw, 58vw"
-                unoptimized
-                aria-hidden="true"
-                style={{ objectFit: 'contain' }}
-              />
-              <Image
-                className="comparison-image comparison-image-old"
-                src="/pelicans/2024-10-claude-3.5-sonnet.svg"
-                alt=""
-                fill
-                priority
-                sizes="(max-width: 980px) 100vw, 58vw"
-                unoptimized
-                aria-hidden="true"
-                style={{
-                  objectFit: 'contain',
-                  clipPath: `inset(0 ${100 - comparison}% 0 0)`,
-                }}
-              />
-              <span className="comparison-divider" aria-hidden="true" />
-              <input
-                id="comparison-slider"
-                className="comparison-stage-control"
-                type="range"
-                min="8"
-                max="92"
-                value={comparison}
-                aria-label={t('拖动对比 2024 与 2026')}
-                aria-describedby="comparison-caption"
-                aria-valuetext={
-                  locale === 'zh'
-                    ? `左侧显示 ${comparison}% 的 2024 结果`
-                    : `${comparison}% of the 2024 result is visible on the left`
-                }
-                onChange={(event) => setComparison(Number(event.target.value))}
-              />
-            </div>
-            <div className="comparison-control" aria-hidden="true">
-              <span>{t('直接拖动图片，或使用方向键')}</span>
-              <output htmlFor="comparison-slider">{comparison}%</output>
-            </div>
-          </figure>
+          <Comparison locale={locale} />
         </section>
 
         <section className="fact-strip" aria-label={t('收录范围')}>

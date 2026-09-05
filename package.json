@@ -12,7 +12,8 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit --incremental false",
-    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+    "check:export": "node --experimental-strip-types scripts/check-export.mjs",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build && npm run check:export"
   },
   "dependencies": {
     "next": "16.3.4",

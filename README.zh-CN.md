@@ -21,6 +21,8 @@ npm run dev
 
 启动后访问终端中显示的本地地址。
 
+中文页面位于 `/`，英文页面位于 `/en/`。两个地址分别导出对应语言的正文与分享元数据，语言选择器用于切换页面。
+
 ## 常用命令
 
 ```bash
@@ -36,9 +38,10 @@ npm run check  # 运行 lint、类型检查、测试和生产构建
 
 - 时间轴数据与来源链接：`app/content/milestones.ts`
 - 英文翻译：`app/content/translations.ts`
-- 页面交互：`app/page.tsx`
+- 页面交互：`app/home.tsx`
 - 测试图片与视频：`public/pelicans/`
 - 页面样式：`app/globals.css`
-- 页面元数据与社交分享图：`app/layout.tsx`、`public/og.png`
+- 页面元数据与文档布局：`app/site-layout.tsx`
+- 社交分享图：`public/og.png`（中文）、`public/og-en.png`（英文）
 
 修改内容后运行 `npm run check`。检查覆盖日期、排序、本地资源、来源链接格式及英文翻译完整性，不验证外部页面是否可访问。

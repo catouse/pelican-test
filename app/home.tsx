@@ -3,9 +3,8 @@
 import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { readPreference, writePreference } from './preferences';
-
 import { milestones, mediaCount, timelineStart, latestUpdate, type Media } from './content/milestones';
-import { translate, type Locale } from './content/translations';
+import { translate, localePaths, type Locale } from './content/translations';
 
 const yearOptions = ['全部', ...new Set(milestones.map((milestone) => milestone.year))] as const;
 type YearOption = (typeof yearOptions)[number];
@@ -188,41 +187,13 @@ function Comparison({ locale }: { locale: Locale }) {
   );
 }
 
-export default function Home() {
-  const [locale, setLocale] = useState<Locale>('zh');
+export default function Home({ locale }: { locale: Locale }) {
   const [year, setYear] = useState<YearOption>('全部');
   const [preview, setPreview] = useState<Media | null>(null);
   const previewDialog = useRef<HTMLDialogElement>(null);
 
-  useEffect(() => {
-    const savedLocale = readPreference('pelican-locale');
-    const nextLocale =
-      savedLocale === 'zh' || savedLocale === 'en'
-        ? savedLocale
-        : navigator.language.toLowerCase().startsWith('zh')
-          ? 'zh'
-          : 'en';
-    const timeout = window.setTimeout(() => setLocale(nextLocale), 0);
-    return () => window.clearTimeout(timeout);
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
-    document.title = translate(locale, '鹈鹕测试时间轴 | 大模型 SVG 能力演进');
-    document
-      .querySelector('meta[name="description"]')
-      ?.setAttribute(
-        'content',
-        translate(
-          locale,
-          '用同一句 SVG 提示词，直观浏览 2024 到 2026 年不同大模型的实际效果演进。',
-        ),
-      );
-  }, [locale]);
-
   const selectLocale = (nextLocale: Locale) => {
-    setLocale(nextLocale);
-    writePreference('pelican-locale', nextLocale);
+    window.location.assign(localePaths[nextLocale] + window.location.hash);
   };
 
   const t = (text: string) => translate(locale, text);

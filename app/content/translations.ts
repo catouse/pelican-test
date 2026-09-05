@@ -1,5 +1,7 @@
 export type Locale = 'zh' | 'en';
 
+export const localePaths = { zh: '/', en: '/en/' } as const;
+
 export const english: Record<string, string> = {
   '固定提示词': 'Standard prompt',
   '回顾样本': 'Retrospective sample',

@@ -21,6 +21,9 @@ npm run dev
 
 Open the local URL shown in the terminal.
 
+The Chinese page is at `/`; the English page is at `/en/`. Each URL is exported
+with its own language and sharing metadata. The language selector navigates between them.
+
 ## Commands
 
 ```bash
@@ -36,10 +39,11 @@ npm run check  # Run lint, type checking, tests, and the production build
 
 - Timeline data and source links: `app/content/milestones.ts`
 - English translations: `app/content/translations.ts`
-- Page interactions: `app/page.tsx`
+- Page interactions: `app/home.tsx`
 - Test images and videos: `public/pelicans/`
 - Page styles: `app/globals.css`
-- Page metadata and social preview: `app/layout.tsx` and `public/og.png`
+- Page metadata and document layout: `app/site-layout.tsx`
+- Social previews: `public/og.png` (Chinese) and `public/og-en.png` (English)
 
 Run `npm run check` after changing content. It checks dates, ordering, local assets,
 source-link format, and English translation coverage; it does not verify external page availability.

@@ -28,11 +28,18 @@ npm run dev    # Start the development server
 npm run build  # Create a production build
 npm run start  # Start the production server
 npm run lint   # Check the code
+npm test       # Check preferences, content, assets, and translations
+npm run check  # Run lint, type checking, tests, and the production build
 ```
 
 ## Maintaining content
 
-- Timeline data and source links: `milestones` in `app/page.tsx`
+- Timeline data and source links: `app/content/milestones.ts`
+- English translations: `app/content/translations.ts`
+- Page interactions: `app/page.tsx`
 - Test images and videos: `public/pelicans/`
 - Page styles: `app/globals.css`
 - Page metadata and social preview: `app/layout.tsx` and `public/og.png`
+
+Run `npm run check` after changing content. It checks dates, ordering, local assets,
+source-link format, and English translation coverage; it does not verify external page availability.

@@ -1,8 +1,29 @@
 export type Locale = 'zh' | 'en';
 
 export const localePaths = { zh: '/', en: '/en/' } as const;
+export const myTestsPaths = { zh: '/my-tests/', en: '/en/my-tests/' } as const;
 
 export const english: Record<string, string> = {
+  '返回首页': 'Back to home',
+  '我的测试': 'My tests',
+  '我的鹈鹕测试集锦': 'My pelican test collection',
+  '我的鹈鹕测试集锦 | Pelican Test': 'My pelican test collection | Pelican Test',
+  '记录我的鹈鹕骑行测试，浏览不同模型的作品、日期和原始提示词，打开完整演示。':
+    'Browse my pelican cycling tests, with model names, dates, original prompts, and complete demos.',
+  '我用不同模型生成的鹈鹕骑行作品，持续收集中。':
+    'My pelican cycling experiments with different models. More to come.',
+  '跳到测试集锦': 'Skip to test collection',
+  '鹈鹕骑车 SVG 动画': 'Pelican cycling SVG animation',
+  '海边骑行场景，支持暂停、三档速度和车铃。':
+    'A seaside ride with playback controls, three speeds, and a bicycle bell.',
+  '系着红围巾的鹈鹕骑着绿色自行车，沿着海边前进':
+    'A pelican wearing a red scarf rides a green bicycle along the coast',
+  '模型': 'Model',
+  '日期': 'Date',
+  '打开测试': 'Open test',
+  '新标签页': 'new tab',
+  '打开完整演示': 'Open full demo',
+  '浏览鹈鹕测试时间轴': 'Browse the pelican test timeline',
   '固定提示词': 'Standard prompt',
   '回顾样本': 'Retrospective sample',
   '混合口径': 'Mixed criteria',

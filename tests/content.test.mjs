@@ -5,9 +5,29 @@ import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import ts from 'typescript';
 import { milestones } from '../app/content/milestones.ts';
+import { myTests } from '../app/content/my-tests.ts';
 import { english } from '../app/content/translations.ts';
 
 const projectDir = fileURLToPath(new URL('../', import.meta.url));
+
+test('personal tests have valid dates, unique IDs, and complete local demos', () => {
+  const ids = new Set();
+  for (const [index, item] of myTests.entries()) {
+    assert.match(item.id, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+    assert.ok(!ids.has(item.id), `Duplicate personal test: ${item.id}`);
+    ids.add(item.id);
+    assert.match(item.date, /^\d{4}-\d{2}-\d{2}$/);
+    assert.equal(new Date(item.date).toISOString().slice(0, 10), item.date);
+    if (index) assert.ok(item.date <= myTests[index - 1].date, 'Personal tests must be newest first');
+    for (const field of ['model', 'title', 'description', 'prompt', 'thumbnailAlt']) {
+      assert.ok(item[field].trim(), `${item.id}: missing ${field}`);
+    }
+    for (const asset of [item.thumbnail, item.href]) {
+      assert.ok(asset.startsWith(`/my-tests/${item.id}/`), `${item.id}: incorrect asset directory`);
+      assert.ok(fs.existsSync(path.join(projectDir, 'public', asset)), `Missing personal test asset: ${asset}`);
+    }
+  }
+});
 
 test('timeline entries have valid dates, unique keys and chronological order', () => {
   assert.ok(milestones.length > 0, 'The timeline must contain at least one entry');
@@ -52,6 +72,8 @@ test('Chinese content and literal translation calls have English translations', 
     else if (value && typeof value === 'object') Object.values(value).forEach(collect);
   };
   collect(milestones);
+  // Prompts are preserved verbatim; only the presentation copy is translated.
+  myTests.forEach((item) => collect([item.title, item.description, item.thumbnailAlt]));
 
   const scan = (directory) => {
     for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {

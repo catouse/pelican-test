@@ -24,6 +24,9 @@ Open the local URL shown in the terminal.
 The Chinese page is at `/`; the English page is at `/en/`. Each URL is exported
 with its own language and sharing metadata. The language selector navigates between them.
 
+The personal test collection is at `/my-tests/` (Chinese) and `/en/my-tests/` (English).
+Each card includes a thumbnail, model, test date, and original prompt, and opens the complete demo in a new tab.
+
 ## Commands
 
 ```bash
@@ -38,6 +41,8 @@ npm run check  # Run lint, type checking, tests, and the production build
 ## Maintaining content
 
 - Timeline data and source links: `app/content/milestones.ts`
+- Personal test records: `app/content/my-tests.ts`
+- Original personal test demos and thumbnails: `public/my-tests/`
 - English translations: `app/content/translations.ts`
 - Page interactions: `app/home.tsx`
 - Test images and videos: `public/pelicans/`
@@ -47,3 +52,11 @@ npm run check  # Run lint, type checking, tests, and the production build
 
 Run `npm run check` after changing content. It checks dates, ordering, local assets,
 source-link format, and English translation coverage; it does not verify external page availability.
+
+### Add a personal test
+
+1. Place the original HTML, its assets, and a thumbnail in `public/my-tests/<test-id>/`.
+2. Add a record to `myTests` in `app/content/my-tests.ts`, ordered newest first. Include its date, model, title, description, original prompt, thumbnail, and demo path.
+3. Add English translations for the title, description, and thumbnail alt text in `app/content/translations.ts`. Preserve the original prompt and demo content verbatim.
+
+The first test is `2026-09-12-gpt-6-astra-max`, dated 2026-09-12 and generated with GPT-6-Astra-Max, from the Codex task “创建鹈鹕骑车SVG动画”. Adding records does not require layout changes.

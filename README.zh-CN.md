@@ -23,6 +23,8 @@ npm run dev
 
 中文页面位于 `/`，英文页面位于 `/en/`。两个地址分别导出对应语言的正文与分享元数据，语言选择器用于切换页面。
 
+个人测试集锦位于 `/my-tests/`（中文）和 `/en/my-tests/`（英文）。卡片展示缩略图、模型、测试日期和原始提示词，点击会在新标签页打开完整演示。
+
 ## 常用命令
 
 ```bash
@@ -37,6 +39,8 @@ npm run check  # 运行 lint、类型检查、测试和生产构建
 ## 内容维护
 
 - 时间轴数据与来源链接：`app/content/milestones.ts`
+- 个人测试数据：`app/content/my-tests.ts`
+- 个人测试原始作品与缩略图：`public/my-tests/`
 - 英文翻译：`app/content/translations.ts`
 - 页面交互：`app/home.tsx`
 - 测试图片与视频：`public/pelicans/`
@@ -45,3 +49,11 @@ npm run check  # 运行 lint、类型检查、测试和生产构建
 - 社交分享图：`public/og.png`（中文）、`public/og-en.png`（英文）
 
 修改内容后运行 `npm run check`。检查覆盖日期、排序、本地资源、来源链接格式及英文翻译完整性，不验证外部页面是否可访问。
+
+### 增加个人测试
+
+1. 在 `public/my-tests/<测试 ID>/` 中放入原始 HTML 及缩略图；HTML 所需资源也保存在该目录中。
+2. 在 `app/content/my-tests.ts` 的 `myTests` 数组中新增记录，按日期从新到旧排列。填写日期、模型、标题、简介、原始提示词、缩略图及演示路径。
+3. 在 `app/content/translations.ts` 中补充标题、简介和缩略图描述的英文翻译。原始提示词和演示内容保持原样。
+
+首个测试为 `2026-09-12-gpt-6-astra-max`，日期为 2026-09-12，模型为 GPT-6-Astra-Max，作品来自 Codex 任务“创建鹈鹕骑车SVG动画”。页面无需为新增记录修改布局。
